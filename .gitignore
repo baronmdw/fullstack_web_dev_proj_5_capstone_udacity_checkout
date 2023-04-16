@@ -1,2 +1,7 @@
 *venv/
 /backend/src/flaskr/__pycache__/*
+/backend/src/flaskr/database/__pycache__/*
+
+
+backend/src/.ENV
+backend/src/.flaskenv

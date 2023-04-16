@@ -1,10 +1,25 @@
 import os
 from flask import Flask, request, abort, jsonify
-from ..database.models import setup_db
+from .database.models import setup_db, Connectiontest, db
+from flask_migrate import Migrate
 
+def create_app(dbURI='', test_config=None):
+    if dbURI == "":
+        DB_HOST = os.environ.get("DB_HOST")
+        DB_USER = os.environ.get("DB_USER")
+        DB_PASSWORD = os.environ.get("DB_PASSWORD")
+        DB_NAME = os.environ.get("DB_NAME")
+        DB_PORT = os.environ.get("DB_PORT")
+        dbURI = 'postgresql://{}:{}@{}:{}/{}'.format(DB_USER,DB_PASSWORD,DB_HOST,DB_PORT,DB_NAME)
+        print(dbURI)
+        
+    app = Flask(__name__)
+    app.config.from_mapping(SQLALCHEMY_DATABASE_URI=dbURI)
+    setup_db(app, dbURI)
+    Migrate(app,db)
 
-app = Flask(__name__)
-
-@app.route("/")
-def index():
-    return "Hello World"
+    @app.route("/")
+    def index():
+        return "Hello World"
+    
+    return app
