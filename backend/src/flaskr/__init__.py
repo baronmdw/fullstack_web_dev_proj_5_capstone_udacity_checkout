@@ -11,7 +11,6 @@ def create_app(dbURI='', test_config=None):
         DB_NAME = os.environ.get("DB_NAME")
         DB_PORT = os.environ.get("DB_PORT")
         dbURI = 'postgresql://{}:{}@{}:{}/{}'.format(DB_USER,DB_PASSWORD,DB_HOST,DB_PORT,DB_NAME)
-        print(dbURI)
         
     app = Flask(__name__)
     app.config.from_mapping(SQLALCHEMY_DATABASE_URI=dbURI)
@@ -20,6 +19,9 @@ def create_app(dbURI='', test_config=None):
 
     @app.route("/")
     def index():
-        return "Hello World"
+        connections = Connectiontest.query.all()
+        connections_formatted = [c.format() for c in connections]
+        print(connections_formatted)
+        return (connections_formatted)
     
     return app
