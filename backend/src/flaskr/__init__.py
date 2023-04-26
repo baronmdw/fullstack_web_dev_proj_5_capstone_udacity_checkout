@@ -1,5 +1,6 @@
 import os
 from flask import Flask, request, abort, jsonify
+from flask_cors import CORS, cross_origin
 from .database.models import setup_db, Connectiontest, db
 from flask_migrate import Migrate
 
@@ -16,8 +17,10 @@ def create_app(dbURI='', test_config=None):
     app.config.from_mapping(SQLALCHEMY_DATABASE_URI=dbURI)
     setup_db(app, dbURI)
     Migrate(app,db)
+    cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     @app.route("/")
+    @cross_origin()
     def index():
         connections = Connectiontest.query.all()
         connections_formatted = [c.format() for c in connections]
