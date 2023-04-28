@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatListModule} from '@angular/material/list';
+import {MatIcon, MatIconModule} from '@angular/material/icon';
 
 
 
@@ -25,7 +26,8 @@ import { GrocerylistComponent } from './grocerylist/grocerylist.component';
     HttpClientModule,
     MatButtonModule,
     MatToolbarModule,
-    MatListModule
+    MatListModule,
+    MatIconModule
   ],
   providers: [],
   bootstrap: [AppComponent]
