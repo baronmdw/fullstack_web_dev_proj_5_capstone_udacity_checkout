@@ -1,1 +1,7 @@
-<p>receipes works!</p>
+<mat-toolbar color="primary">Rezepte</mat-toolbar>
+<mat-list>
+    <mat-list-item *ngFor="let item of receipeItems">{{item}}</mat-list-item>
+</mat-list>
+<button mat-fab	color="primary">
+    <mat-icon>add</mat-icon>
+</button>
