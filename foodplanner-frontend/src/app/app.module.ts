@@ -13,13 +13,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { GrocerylistComponent } from './grocerylist/grocerylist.component';
 import { WeekplanComponent } from './weekplan/weekplan.component';
+import { ReceipesComponent } from './receipes/receipes.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     GrocerylistComponent,
-    WeekplanComponent
+    WeekplanComponent,
+    ReceipesComponent
   ],
   imports: [
     BrowserModule,
