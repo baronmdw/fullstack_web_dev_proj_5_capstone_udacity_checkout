@@ -12,12 +12,14 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { GrocerylistComponent } from './grocerylist/grocerylist.component';
+import { WeekplanComponent } from './weekplan/weekplan.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    GrocerylistComponent
+    GrocerylistComponent,
+    WeekplanComponent
   ],
   imports: [
     BrowserModule,
