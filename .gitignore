@@ -1,6 +1,8 @@
 *venv/
 /backend/src/flaskr/__pycache__/*
 /backend/src/flaskr/database/__pycache__/*
+/backend/src/migrations/__pycache__/*
+/backend/src/migrations/versions/__pycache__/*
 
 
 backend/src/.ENV

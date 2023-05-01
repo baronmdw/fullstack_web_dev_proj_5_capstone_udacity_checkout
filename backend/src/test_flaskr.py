@@ -3,6 +3,7 @@ import unittest
 import json
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+from flask_migrate import upgrade
 
 from flaskr import create_app
 from flaskr.database.models import setup_db, Connectiontest
@@ -21,6 +22,8 @@ class TriviaTestCase(unittest.TestCase):
         self.database_path = 'postgresql://{}:{}@{}:{}/{}'.format(self.DB_TEST_USER,self.DB_TEST_PASSWORD,self.DB_TEST_HOST, self.DB_TEST_PORT, self.DB_TEST_NAME)
         print(self.database_path)
         self.app = create_app(self.database_path)
+        with self.app.app_context():
+            upgrade()
         self.client = self.app.test_client
    
     def tearDown(self):

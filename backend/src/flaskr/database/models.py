@@ -30,6 +30,7 @@ class Connectiontest(db.Model):
 
     id = Column(Integer, primary_key=True)
     text = Column(String)
+    test2 = Column(String)
 
     # def __init__(self, question, answer, category, difficulty):
     #     self.question = question
@@ -52,4 +53,5 @@ class Connectiontest(db.Model):
         return {
             'id': self.id,
             'text': self.text,
+            'probablyempty': self.test2
             }
