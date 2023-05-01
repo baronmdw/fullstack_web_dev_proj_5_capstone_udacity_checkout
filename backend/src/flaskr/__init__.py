@@ -1,7 +1,7 @@
 import os
 from flask import Flask, request, abort, jsonify
 from flask_cors import CORS, cross_origin
-from .database.models import setup_db, Connectiontest, db
+from .database.models import setup_db, Connectiontest, Receipes, db
 from flask_migrate import Migrate
 
 def create_app(dbURI='', test_config=None):
@@ -26,5 +26,16 @@ def create_app(dbURI='', test_config=None):
         connections_formatted = [c.format() for c in connections]
         print(connections_formatted)
         return (connections_formatted)
+    
+    @app.route("/receipes", methods=["GET"])
+    @cross_origin()
+    def get_receipes():
+        receipes = Receipes.query.all()
+        receipes_formatted = [r.format() for r in receipes]
+        responseObject = {
+            "success": True,
+            "receipes": receipes_formatted
+        }
+        return jsonify(responseObject)
     
     return app

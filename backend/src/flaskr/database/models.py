@@ -55,3 +55,17 @@ class Connectiontest(db.Model):
             'text': self.text,
             'probablyempty': self.test2
             }
+    
+class Receipes(db.Model):
+    __tablename__ = "receipes"
+
+    id =  Column(Integer, primary_key=True)
+    name = Column(String)
+    description = Column(String)
+
+    def format(self):
+        return{
+            'id': self.id,
+            'name': self.name,
+            'description': self.description
+        }

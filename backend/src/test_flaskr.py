@@ -37,6 +37,12 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertGreaterEqual(len(content[0].keys()), 1)
 
+    def test_get_receipes(self):
+        # This test tests for the correct transmission of all categories
+        res = self.client().get("/receipes")
+        content = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertGreaterEqual(len(content["receipes"].keys()), 1)
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
