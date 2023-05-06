@@ -59,9 +59,25 @@ class Connectiontest(db.Model):
 class Receipes(db.Model):
     __tablename__ = "receipes"
 
-    id =  Column(Integer, primary_key=True)
+    id =  Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     description = Column(String)
+
+    def __init__(self, name, description):
+        self.name = name
+        self.description = description
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    # def update(self):
+    #     db.session.commit()
+
+    # def delete(self):
+    #     db.session.delete(self)
+        # db.session.commit()
+
 
     def format(self):
         return{

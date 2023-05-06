@@ -37,5 +37,17 @@ def create_app(dbURI='', test_config=None):
             "receipes": receipes_formatted
         }
         return jsonify(responseObject)
+
+    @app.route("/receipes", methods=["POST"])
+    @cross_origin()
+    def post_receipe():
+        inputReceipe = request.get_json()
+        try:
+            newReceipe = Receipes(name=inputReceipe["name"], description=inputReceipe["receipe"])
+            newReceipe.insert()
+            return jsonify({"success": True})
+        except:
+            db.session.rollback()
+            abort(400)
     
     return app

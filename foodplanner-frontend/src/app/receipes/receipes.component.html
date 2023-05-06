@@ -2,9 +2,24 @@
 <mat-list>
     <mat-list-item *ngFor="let item of receipeItems">{{item.name}}</mat-list-item>
 </mat-list>
-<button mat-fab	color="primary">
+<button mat-fab	color="primary" (click)="openFormFunction()">
     <mat-icon>add</mat-icon>
 </button>
 <button mat-button color="primary" (click)="loadReceipes()">
     update
 </button>
+<div [hidden]="!openForm">
+    Formdata
+    <form #newReceipe="ngForm" class="receipeForm" (ngSubmit)="submitReceipe(newReceipe)">
+        <mat-form-field class="nameOfReceipe">
+            <mat-label>Name</mat-label>
+            <input matInput placeholder="Spaghetti" name="name" ngModel>
+        </mat-form-field>
+        <br>
+        <mat-form-field class="nameOfReceipe" >
+            <mat-label>Receipe</mat-label>
+            <textarea matInput placeholder="Boil in hot water" name="receipe" ngModel></textarea>
+        </mat-form-field>
+        <button mat-button color="primary" type="submit">Add to Database</button>
+    </form>
+</div>
