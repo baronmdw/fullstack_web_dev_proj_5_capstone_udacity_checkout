@@ -9,7 +9,6 @@
     update
 </button>
 <div [hidden]="!openForm">
-    Formdata
     <form #newReceipe="ngForm" class="receipeForm" (ngSubmit)="submitReceipe(newReceipe)">
         <mat-form-field class="nameOfReceipe">
             <mat-label>Name</mat-label>
