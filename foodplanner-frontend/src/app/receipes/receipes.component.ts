@@ -21,7 +21,6 @@ export class ReceipesComponent implements OnInit {
       const resultString = JSON.stringify(res);
       let resultJSON = JSON.parse(resultString);
       this.receipeItems = resultJSON.receipes;
-      console.log(resultJSON.receipes)
     })
   }
 
@@ -30,8 +29,10 @@ export class ReceipesComponent implements OnInit {
   }
 
   submitReceipe(data:any){
-    console.log(data.form.controls)
-    const response = this._http.post('http://localhost:5000/receipes', {"name":data.form.controls.name.value, "receipe": data.form.controls.receipe.value}).subscribe(data => console.log(data))
-    console.log("submitted")
+    const response = this._http.post('http://localhost:5000/receipes', {"name":data.form.controls.name.value, "receipe": data.form.controls.receipe.value}).subscribe(response => {
+      this.openForm = false;
+      this.loadReceipes();
+      data.form.reset()
+    })
   }
 }
