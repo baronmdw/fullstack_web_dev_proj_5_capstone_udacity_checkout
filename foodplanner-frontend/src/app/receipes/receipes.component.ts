@@ -11,7 +11,7 @@ export class ReceipesComponent implements OnInit {
   receipeIngredients = [{"name": "Nudeln", "amount": 500, "unit": "gram"}];
   openForm = false;
   showReceipe = false;
-  currentReceipe = {"name": "Spaghetti", "description": "fare niente"}
+  currentReceipe = {"name": "Spaghetti", "description": "fare niente", "id": 0}
 
   constructor(private _http:HttpClient) { }
 
@@ -64,7 +64,7 @@ export class ReceipesComponent implements OnInit {
   closeReceipe(){
     this.openForm = false;
     this.showReceipe = false;
-    this.currentReceipe = {"name": "", "description": ""};
+    this.currentReceipe = {"name": "", "description": "", "id":0};
     this.receipeIngredients = [];
   }
 
@@ -72,5 +72,13 @@ export class ReceipesComponent implements OnInit {
     const ingredientToAdd = {"name": data.form.controls.name.value, "amount": data.form.controls.amount.value, "unit": data.form.controls.unit.value};
     this.receipeIngredients.push(ingredientToAdd);
     data.form.reset()
+  }
+
+  deleteReceipe(){
+    const response = this._http.delete('http://localhost:5000/receipes/'+this.currentReceipe.id)
+    .subscribe((res)=> {
+      this.closeReceipe();
+      this.loadReceipes();
+    })
   }
 }

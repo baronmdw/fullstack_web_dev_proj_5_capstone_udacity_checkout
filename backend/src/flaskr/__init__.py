@@ -80,6 +80,17 @@ def create_app(dbURI='', test_config=None):
             ingredientOfInterest = ingredientToAdd.format()
             ingredients.append({"id": ingredientOfInterest["id"], "name": ingredientOfInterest["name"], "amount": ingredientMapElement["amount"], "unit": ingredientOfInterest["unit"]})
         return jsonify({"receipe": receipeToSend, "ingredients": ingredients})
+    
+    @app.route("/receipes/<int:id>", methods=["DELETE"])
+    @cross_origin()
+    def delete_receipe(id):
+        ingredientMap = ingredientsPerReceipe.query.filter_by(receipe_id = id)
+        [ingr.delete() for ingr in ingredientMap]
+        receipe = Receipes.query.get(id)
+        receipe.delete()
+
+
+        return jsonify({"success": True})
         
     @app.errorhandler(400)
     def err_bad_request(error):

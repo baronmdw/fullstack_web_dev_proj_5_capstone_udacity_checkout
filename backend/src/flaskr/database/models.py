@@ -82,6 +82,10 @@ class ingredientsPerReceipe (db.Model):
             "receipe_id": self.receipe_id,
             "ingredient_id": self.ingredient_id
         }
+    
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
                                  
 
 class Receipes(db.Model):
@@ -108,9 +112,9 @@ class Receipes(db.Model):
     # def update(self):
     #     db.session.commit()
 
-    # def delete(self):
-    #     db.session.delete(self)
-        # db.session.commit()
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
 
     def format(self):
@@ -141,6 +145,10 @@ class Ingredient(db.Model):
             "name": self.name,
             "unit": self.unit
         }
+    
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 
 # Genremap = db.Table('Genremap',
 #                     db.Column('id', db.Integer, primary_key=True),
