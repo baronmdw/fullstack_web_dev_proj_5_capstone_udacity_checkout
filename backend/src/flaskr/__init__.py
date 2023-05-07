@@ -1,7 +1,7 @@
 import os
 from flask import Flask, request, abort, jsonify
 from flask_cors import CORS, cross_origin
-from .database.models import setup_db, Connectiontest, Receipes, db
+from .database.models import setup_db, Connectiontest, Receipes, Ingredient, ingredientsPerReceipe, db
 from flask_migrate import Migrate
 
 def create_app(dbURI='', test_config=None):
@@ -25,6 +25,13 @@ def create_app(dbURI='', test_config=None):
         connections = Connectiontest.query.all()
         connections_formatted = [c.format() for c in connections]
         print(connections_formatted)
+        newReceipe = Receipes(name="Test",description="Gotta find out")
+        newReceipe.insert()
+        newIngredient = Ingredient(name="Nudel", unit="gram")
+        newIngredient.insert()
+        print(newReceipe.id)
+        ingredient = ingredientsPerReceipe(ingredient_id=newIngredient.id, receipe_id=newReceipe.id, amount=300)
+        ingredient.insert()
         return (connections_formatted)
     
     @app.route("/receipes", methods=["GET"])

@@ -56,12 +56,38 @@ class Connectiontest(db.Model):
             'probablyempty': self.test2
             }
     
+class ingredientsPerReceipe (db.Model):
+    __tablename__ = "ingredientmap"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    amount = db.Column(db.Float, nullable=False)
+    receipe_id = Column(Integer, db.ForeignKey("receipes.id"), nullable=False)
+    ingredient_id = Column(Integer, db.ForeignKey("ingredients.id"), nullable=False)
+    # receipe = db.relationship("Receipes", backref=db.backref("receipe_ingredientmap", lazy=True))
+    # ingredient = db.relationship("Ingredient", backref=db.backref("ingredient_ingredientmap", lazy=True))
+    
+    def __init__(self, receipe_id, ingredient_id, amount):
+        self.receipe_id = receipe_id
+        self.ingredient_id = ingredient_id
+        self.amount = amount
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+                                 
+
 class Receipes(db.Model):
     __tablename__ = "receipes"
 
     id =  Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String)
     description = Column(String)
+    # ingredient = db.relationship("Ingredient", secondary="ingredientsPerReceipe", backref=db.backref("receipe", lazy=True), overlaps="ingredient, ingredientmap")
+
+    # genres = db.relationship('Genre', secondary=Genremap, backref=db.backref('artist', lazy=True), overlaps="genres,venue")
+        # artist = db.relationship('Artist', secondary='Show', backref=db.backref('venue', lazy=True), overlaps="venue,venue_shows")
+
+
 
     def __init__(self, name, description):
         self.name = name
@@ -85,3 +111,27 @@ class Receipes(db.Model):
             'name': self.name,
             'description': self.description
         }
+    
+class Ingredient(db.Model):
+    __tablename__ = "ingredients"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
+    unit = Column(String)
+
+    def __init__(self, name, unit):
+        self.name = name
+        self.unit = unit
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+
+
+# Genremap = db.Table('Genremap',
+#                     db.Column('id', db.Integer, primary_key=True),
+#                     db.Column('venue_id',db.Integer, db.ForeignKey('Venue.id'), nullable=True),
+#                     db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id'), nullable=True),
+#                     db.Column('genre_id', db.Integer, db.ForeignKey('Genre.id'), nullable=False)
+#                     )
