@@ -53,9 +53,14 @@ def create_app(dbURI='', test_config=None):
             newReceipe = Receipes(name=inputReceipe["name"], description=inputReceipe["receipe"])
             newReceipe.insert()
             for ingredient in inputReceipe["ingredients"]:
-                newIngredient = Ingredient(name=ingredient["name"], unit=ingredient["unit"])
-                newIngredient.insert()
-                newIngredientMap = ingredientsPerReceipe(ingredient_id=newIngredient.id, receipe_id=newReceipe.id, amount=ingredient["amount"])
+                existingIngredient = Ingredient.query.filter(Ingredient.name.ilike(ingredient["name"]), Ingredient.unit.ilike(ingredient["unit"])).one_or_none()
+                if existingIngredient:
+                    ingredientId = existingIngredient.id
+                else:
+                    newIngredient = Ingredient(name=ingredient["name"], unit=ingredient["unit"])
+                    newIngredient.insert()
+                    ingredientId = newIngredient.id
+                newIngredientMap = ingredientsPerReceipe(ingredient_id=ingredientId, receipe_id=newReceipe.id, amount=ingredient["amount"])
                 newIngredientMap.insert()
             return jsonify({"success": True})
         except:
