@@ -81,4 +81,19 @@ export class ReceipesComponent implements OnInit {
       this.loadReceipes();
     })
   }
+
+  dropIngredient(name:String) {
+      this.receipeIngredients.forEach((element, index) => {
+        if (element.name == name) {
+          console.log("element found")
+          this.receipeIngredients.splice(index,1);
+        }
+      })
+  }
+
+  editReceipe(){
+    this.showReceipe = false;
+    this.openForm = true;
+
+  }
 }
