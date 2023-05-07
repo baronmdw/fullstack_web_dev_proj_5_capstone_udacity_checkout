@@ -52,6 +52,11 @@ def create_app(dbURI='', test_config=None):
         try:
             newReceipe = Receipes(name=inputReceipe["name"], description=inputReceipe["receipe"])
             newReceipe.insert()
+            for ingredient in inputReceipe["ingredients"]:
+                newIngredient = Ingredient(name=ingredient["name"], unit=ingredient["unit"])
+                newIngredient.insert()
+                newIngredientMap = ingredientsPerReceipe(ingredient_id=newIngredient.id, receipe_id=newReceipe.id, amount=ingredient["amount"])
+                newIngredientMap.insert()
             return jsonify({"success": True})
         except:
             db.session.rollback()

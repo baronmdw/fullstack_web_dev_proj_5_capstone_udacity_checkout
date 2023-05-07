@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class ReceipesComponent implements OnInit {
   receipeItems = [{"name":"Spaghetti"}, {"name":"Pizza"}, {"name":"Spätzle"}];
+  receipeIngredients = [{"name": "Nudeln", "amount": 500, "unit": "gram"}];
   openForm = false;
 
   constructor(private _http:HttpClient) { }
@@ -29,10 +30,16 @@ export class ReceipesComponent implements OnInit {
   }
 
   submitReceipe(data:any){
-    const response = this._http.post('http://localhost:5000/receipes', {"name":data.form.controls.name.value, "receipe": data.form.controls.receipe.value}).subscribe(response => {
+    const response = this._http.post('http://localhost:5000/receipes', {"name":data.form.controls.name.value, "receipe": data.form.controls.receipe.value, "ingredients": this.receipeIngredients}).subscribe(response => {
       this.openForm = false;
       this.loadReceipes();
       data.form.reset()
     })
+  }
+
+  submitIngredient(data:any){
+    const ingredientToAdd = {"name": data.form.controls.name.value, "amount": data.form.controls.amount.value, "unit": data.form.controls.unit.value};
+    this.receipeIngredients.push(ingredientToAdd);
+    data.form.reset()
   }
 }
