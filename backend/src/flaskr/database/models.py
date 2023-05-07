@@ -74,6 +74,14 @@ class ingredientsPerReceipe (db.Model):
     def insert(self):
         db.session.add(self)
         db.session.commit()
+
+    def format(self):
+        return {
+            "id": self.id,
+            "amount": self.amount,
+            "receipe_id": self.receipe_id,
+            "ingredient_id": self.ingredient_id
+        }
                                  
 
 class Receipes(db.Model):
@@ -127,7 +135,12 @@ class Ingredient(db.Model):
         db.session.add(self)
         db.session.commit()
 
-
+    def format(self):
+        return{
+            "id": self.id,
+            "name": self.name,
+            "unit": self.unit
+        }
 
 # Genremap = db.Table('Genremap',
 #                     db.Column('id', db.Integer, primary_key=True),

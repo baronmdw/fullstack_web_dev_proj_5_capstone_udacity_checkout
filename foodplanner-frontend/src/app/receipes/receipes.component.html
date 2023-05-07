@@ -1,15 +1,36 @@
 <mat-toolbar color="primary">Rezepte</mat-toolbar>
 <mat-list>
-    <mat-list-item *ngFor="let item of receipeItems">{{item.name}}</mat-list-item>
+    <mat-list-item *ngFor="let item of receipeItems"><p (click)="openReceipe(item.id)">{{item.name}}</p></mat-list-item>
 </mat-list>
 <button mat-fab	color="primary" (click)="openFormFunction()">
     <mat-icon>add</mat-icon>
 </button>
 <button mat-button color="primary" (click)="loadReceipes()">
     update
-</button>
+</button>   
 <div [hidden]="!openForm" >
     <div class="receipeInput">
+        <div class="ingredients">
+            <mat-list>
+                <mat-list-item *ngFor="let item of receipeIngredients">{{item.name}}: {{item.amount}} {{item.unit}}</mat-list-item>
+            </mat-list>
+            <form #newIngredient="ngForm" class="ingredientForm" (ngSubmit)="submitIngredient(newIngredient)">
+                <mat-form-field class="nameOfReceipe">
+                    <mat-label>Amount</mat-label>
+                    <input matInput placeholder="500" name="amount" ngModel>
+                </mat-form-field>
+                <mat-form-field class="nameOfReceipe">
+                    <mat-label>Unit</mat-label>
+                    <input matInput placeholder="gram" name="unit" ngModel>
+                </mat-form-field>
+                <mat-form-field class="nameOfReceipe">
+                    <mat-label>Name</mat-label>
+                    <input matInput placeholder="Nudeln" name="name" ngModel>
+                </mat-form-field>
+                <br>
+                <button mat-button color="primary" type="submit">Add Ingredient</button>
+            </form>
+        </div>
         <form #newReceipe="ngForm" class="receipeForm" (ngSubmit)="submitReceipe(newReceipe)">
             <mat-form-field class="nameOfReceipe">
                 <mat-label>Name</mat-label>
@@ -20,27 +41,15 @@
                 <mat-label>Receipe</mat-label>
                 <textarea matInput placeholder="Boil in hot water" name="receipe" ngModel></textarea>
             </mat-form-field>
+            <br> 
             <button mat-button color="primary" type="submit">Add to Database</button>
         </form>
-        <div class="ingredients">
-            <mat-list>
-                <mat-list-item *ngFor="let item of receipeIngredients">{{item.name}}: {{item.amount}} {{item.unit}}</mat-list-item>
-            </mat-list>
-            <form #newIngredient="ngForm" class="ingredientForm" (ngSubmit)="submitIngredient(newIngredient)">
-                <mat-form-field class="nameOfReceipe">
-                    <mat-label>Name</mat-label>
-                    <input matInput placeholder="Nudeln" name="name" ngModel>
-                </mat-form-field>
-                <mat-form-field class="nameOfReceipe">
-                    <mat-label>Amount</mat-label>
-                    <input matInput placeholder="500" name="amount" ngModel>
-                </mat-form-field>
-                <mat-form-field class="nameOfReceipe">
-                    <mat-label>Unit</mat-label>
-                    <input matInput placeholder="gram" name="unit" ngModel>
-                </mat-form-field>
-                <button mat-button color="primary" type="submit">Add to Database</button>
-            </form>
-        </div>
     </div>
+</div>
+<div [hidden]="!showReceipe">
+    <h3>{{currentReceipe.name}}</h3>
+    <mat-list>
+        <mat-list-item *ngFor="let item of receipeIngredients">{{item.name}}: {{item.amount}} {{item.unit}}</mat-list-item>
+    </mat-list>
+    <p>{{currentReceipe.description}}</p>
 </div>

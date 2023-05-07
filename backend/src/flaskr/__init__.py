@@ -62,4 +62,50 @@ def create_app(dbURI='', test_config=None):
             db.session.rollback()
             abort(400)
     
+    @app.route("/receipes/<int:id>", methods=["GET"])
+    @cross_origin()
+    def get_receipe(id):
+        receipe = Receipes.query.get(id)
+        receipeToSend = receipe.format()
+        ingredientMap = ingredientsPerReceipe.query.filter_by(receipe_id = id)
+        ingredientMapFormatted = [item.format() for item in ingredientMap]
+        ingredients = []
+        for ingredientMapElement in ingredientMapFormatted:
+            ingredientToAdd = Ingredient.query.get(ingredientMapElement["ingredient_id"])
+            ingredientOfInterest = ingredientToAdd.format()
+            ingredients.append({"id": ingredientOfInterest["id"], "name": ingredientOfInterest["name"], "amount": ingredientMapElement["amount"], "unit": ingredientOfInterest["unit"]})
+        return jsonify({"receipe": receipeToSend, "ingredients": ingredients})
+        
+    @app.errorhandler(400)
+    def err_bad_request(error):
+        return jsonify({
+            "success": False,
+            "message": "The request was not formatted correctly",
+            "error": 400
+        }), 400
+
+    @app.errorhandler(404)
+    def err_not_found(error):
+        return jsonify({
+            "success": False,
+            "message": "The requested resource could not be found",
+            "error": 404
+        }), 404
+    
+    @app.errorhandler(422)
+    def err_not_processable(error):
+        return jsonify({
+            "success": False,
+            "message": "The request could not be processed",
+            "error": 422
+        }), 422
+    
+    @app.errorhandler(500)
+    def err_internal(error):
+        return jsonify({
+            "success": False,
+            "message": "Something went wrong on serverside",
+            "error": 500
+        }), 500
+    
     return app

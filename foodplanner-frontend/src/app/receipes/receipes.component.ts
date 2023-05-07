@@ -7,9 +7,11 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./receipes.component.scss']
 })
 export class ReceipesComponent implements OnInit {
-  receipeItems = [{"name":"Spaghetti"}, {"name":"Pizza"}, {"name":"Spätzle"}];
+  receipeItems = [{"id": 1, "name":"Spaghetti"}, {"id": 2, "name":"Pizza"}, {"id":3, "name":"Spätzle"}];
   receipeIngredients = [{"name": "Nudeln", "amount": 500, "unit": "gram"}];
   openForm = false;
+  showReceipe = false;
+  currentReceipe = {"name": "Spaghetti", "description": "fare niente"}
 
   constructor(private _http:HttpClient) { }
 
@@ -34,6 +36,19 @@ export class ReceipesComponent implements OnInit {
       this.openForm = false;
       this.loadReceipes();
       data.form.reset()
+    })
+  }
+
+  openReceipe(receipe:number) {
+    this.showReceipe = true;  
+    console.log(receipe);
+    const response = this._http.get('http://localhost:5000/receipes/'+receipe)
+    .subscribe((res) =>{
+      const resultString = JSON.stringify(res);
+      let resultJSON = JSON.parse(resultString);
+      console.log(resultJSON)
+      this.currentReceipe = resultJSON.receipe;
+      this.receipeIngredients = resultJSON.ingredients;
     })
   }
 
