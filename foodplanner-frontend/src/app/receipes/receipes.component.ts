@@ -29,6 +29,7 @@ export class ReceipesComponent implements OnInit {
 
   openFormFunction(){
     this.openForm = true;
+    this.showReceipe = false;
   }
 
   submitReceipe(data:any){
@@ -40,15 +41,14 @@ export class ReceipesComponent implements OnInit {
   }
 
   openReceipe(receipe:number) {
-    this.showReceipe = true;  
-    console.log(receipe);
     const response = this._http.get('http://localhost:5000/receipes/'+receipe)
     .subscribe((res) =>{
       const resultString = JSON.stringify(res);
       let resultJSON = JSON.parse(resultString);
-      console.log(resultJSON)
       this.currentReceipe = resultJSON.receipe;
       this.receipeIngredients = resultJSON.ingredients;
+      this.showReceipe = true;  
+      this.openForm = false;
     })
   }
 
