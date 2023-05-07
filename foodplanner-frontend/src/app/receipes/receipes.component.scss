@@ -1,4 +1,13 @@
 .receipeInput {
-    display: flex;
-    flex-direction: row;
+    position: fixed;
+    z-index: 100;
+    top: 10%;
+    left: 10%;
+}
+
+.receipeDetails {
+    position: fixed;
+    top: 10%;
+    left: 10%;
+    z-index: 100;
 }

@@ -16,6 +16,7 @@ export class ReceipesComponent implements OnInit {
   constructor(private _http:HttpClient) { }
 
   ngOnInit(): void {
+    this.loadReceipes();
   }
 
   loadReceipes(){
@@ -30,6 +31,14 @@ export class ReceipesComponent implements OnInit {
   openFormFunction(){
     this.openForm = true;
     this.showReceipe = false;
+    this.receipeIngredients = [];
+  }
+
+  closeCreation(form1:any, form2:any) {
+    this.openForm = false;
+    this.receipeIngredients = [];
+    form1.form.reset();
+    form2.form.reset();
   }
 
   submitReceipe(data:any){
@@ -50,6 +59,13 @@ export class ReceipesComponent implements OnInit {
       this.showReceipe = true;  
       this.openForm = false;
     })
+  }
+
+  closeReceipe(){
+    this.openForm = false;
+    this.showReceipe = false;
+    this.currentReceipe = {"name": "", "description": ""};
+    this.receipeIngredients = [];
   }
 
   submitIngredient(data:any){

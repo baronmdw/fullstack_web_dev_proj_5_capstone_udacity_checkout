@@ -14,6 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { GrocerylistComponent } from './grocerylist/grocerylist.component';
 import { WeekplanComponent } from './weekplan/weekplan.component';
 import { ReceipesComponent } from './receipes/receipes.component';
+import { MatCardModule } from '@angular/material/card'; 
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { ReceipesComponent } from './receipes/receipes.component';
     MatListModule,
     MatIconModule,
     MatInputModule,
-    FormsModule
+    FormsModule,
+    MatCardModule
   ],
   providers: [],
   bootstrap: [AppComponent]
