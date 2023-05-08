@@ -59,6 +59,18 @@ class TriviaTestCase(unittest.TestCase):
     #TODO: def test_get_single_receipe_wrong_id(self):
         # This test checks if trying to access a non-existent receipe will result in an error
 
+    #TODO: def test_delete_receipe(self):
+        # This test checks if deleting a receipe works
+
+    #TODO: def test_delete_receipe_not_existing(self):
+        # This test checks if deleting a non-existing receipe will result in an error
+
+    #TODO: def test_patch_receipe(self):
+        # This test checks if updating a receipe works
+
+    #TODO: def test_patch_receipe_wrong(self):
+        # This test checks if updating a receipe with wrong input results in an error
+
     
 
 # Make the tests conveniently executable
