@@ -11,7 +11,10 @@ export class ReceipesComponent implements OnInit {
   receipeIngredients = [{"name": "Nudeln", "amount": 500, "unit": "gram"}];
   openForm = false;
   showReceipe = false;
-  currentReceipe = {"name": "Spaghetti", "description": "fare niente", "id": 0}
+  currentReceipe = {"name": "Spaghetti", "description": "fare niente", "id": 0};
+  editReceipeMode = false;
+  receipeName = "";
+  receipeDescription = "";
 
   constructor(private _http:HttpClient) { }
 
@@ -42,11 +45,19 @@ export class ReceipesComponent implements OnInit {
   }
 
   submitReceipe(data:any){
-    const response = this._http.post('http://localhost:5000/receipes', {"name":data.form.controls.name.value, "receipe": data.form.controls.receipe.value, "ingredients": this.receipeIngredients}).subscribe(response => {
-      this.openForm = false;
-      this.loadReceipes();
-      data.form.reset()
-    })
+    if (!this.editReceipeMode){
+      const response = this._http.post('http://localhost:5000/receipes', {"name":data.form.controls.name.value, "receipe": data.form.controls.receipe.value, "ingredients": this.receipeIngredients}).subscribe(response => {
+        this.openForm = false;
+        this.loadReceipes();
+        data.form.reset()
+      });
+    } else {
+      const response = this._http.patch('http://localhost:5000/receipes', {"name":data.form.controls.name.value, "receipe": data.form.controls.receipe.value, "ingredients": this.receipeIngredients}).subscribe(response => {
+        this.openForm = false;
+        this.loadReceipes();
+        data.form.reset() 
+      });
+    }
   }
 
   openReceipe(receipe:number) {
@@ -94,6 +105,7 @@ export class ReceipesComponent implements OnInit {
   editReceipe(){
     this.showReceipe = false;
     this.openForm = true;
-
+    this.receipeName = this.currentReceipe.name;
+    this.receipeDescription = this.currentReceipe.description;
   }
 }

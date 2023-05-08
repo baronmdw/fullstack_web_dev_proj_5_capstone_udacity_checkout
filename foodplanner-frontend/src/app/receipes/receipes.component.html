@@ -35,12 +35,12 @@
         <form #newReceipe="ngForm" class="receipeForm" (ngSubmit)="submitReceipe(newReceipe)">
             <mat-form-field class="nameOfReceipe">
                 <mat-label>Name</mat-label>
-                <input matInput placeholder="Spaghetti" name="name" ngModel>
+                <input matInput placeholder="Spaghetti" name="name" [(ngModel)]="receipeName">
             </mat-form-field>
             <br>
             <mat-form-field class="nameOfReceipe" >
                 <mat-label>Receipe</mat-label>
-                <textarea matInput placeholder="Boil in hot water" name="receipe" ngModel></textarea>
+                <textarea matInput placeholder="Boil in hot water" name="receipe" [(ngModel)]="receipeDescription"></textarea>
             </mat-form-field>
             <br> 
         </form>
