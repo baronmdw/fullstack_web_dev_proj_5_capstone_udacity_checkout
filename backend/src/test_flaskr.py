@@ -20,7 +20,6 @@ class TriviaTestCase(unittest.TestCase):
         self.DB_TEST_NAME = os.environ.get("DB_TEST_NAME")
         self.DB_TEST_PORT = os.environ.get("DB_PORT")
         self.database_path = 'postgresql://{}:{}@{}:{}/{}'.format(self.DB_TEST_USER,self.DB_TEST_PASSWORD,self.DB_TEST_HOST, self.DB_TEST_PORT, self.DB_TEST_NAME)
-        print(self.database_path)
         self.app = create_app(self.database_path)
         with self.app.app_context():
             upgrade()
