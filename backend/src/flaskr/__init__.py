@@ -84,58 +84,77 @@ def create_app(dbURI='', test_config=None):
             db.session.rollback()
             abort(400)
     
-    #
+    #this endpoint serves to get the details of one receipe
     @app.route("/receipes/<int:id>", methods=["GET"])
+    #TODO: authorizationcheck, read role
+    #TODO: errorhandling
     @cross_origin()
     def get_receipe(id):
+        #query the receipe from the database and format it
         receipe = Receipes.query.get(id)
         receipeToSend = receipe.format()
+        #query the ingredient ids and amounts connected to the receipe and format them
         ingredientMap = ingredientsPerReceipe.query.filter_by(receipe_id = id)
         ingredientMapFormatted = [item.format() for item in ingredientMap]
         ingredients = []
+        #get the ingredient name and unit and put it to the ingredient object array
         for ingredientMapElement in ingredientMapFormatted:
             ingredientToAdd = Ingredient.query.get(ingredientMapElement["ingredient_id"])
             ingredientOfInterest = ingredientToAdd.format()
             ingredients.append({"id": ingredientOfInterest["id"], "name": ingredientOfInterest["name"], "amount": ingredientMapElement["amount"], "unit": ingredientOfInterest["unit"]})
         return jsonify({"receipe": receipeToSend, "ingredients": ingredients})
     
+    #this endpoint serves to delete a specific receipe item
     @app.route("/receipes/<int:id>", methods=["DELETE"])
+    #TODO: authorization, create role
+    #TODO: errorhandling
     @cross_origin()
     def delete_receipe(id):
+        #query the ingredientsmapping objects that belong to the receipe item and delete each one of them
         ingredientMap = ingredientsPerReceipe.query.filter_by(receipe_id = id)
         [ingr.delete() for ingr in ingredientMap]
+        #query the receipe object and delete it
         receipe = Receipes.query.get(id)
         receipe.delete()
         return jsonify({"success": True})
-
+    
+    #this endpoint serves to change a receipe item
     @app.route("/receipes/<int:id>", methods=["PATCH"])
+    #TODO: authorization, create role
+    #TODO: errorhandling
     @cross_origin()
     def update_receipe(id):
         try:
+            #get the input data object, query all ingredients belonging to the receipe and delete them
             inputData = request.get_json()
             ingredientMap = ingredientsPerReceipe.query.filter_by(receipe_id = id)
             [ingr.delete() for ingr in ingredientMap]
+            #query the receipe object and update the name and description
             receipe = Receipes.query.get(id)
-            print("found receipe: ", receipe)
             receipe.update(name = inputData["name"], description = inputData["receipe"])
+            #create the new ingredientmapping objects depending on existing ingredient item or new one
             for ingredient in inputData["ingredients"]:
+                    #check if ingredient item exists
                     existingIngredient = Ingredient.query.filter(Ingredient.name.ilike(ingredient["name"]), Ingredient.unit.ilike(ingredient["unit"])).one_or_none()
                     if existingIngredient:
+                        #existing item
                         ingredientId = existingIngredient.id
                     else:
+                        #new item
                         newIngredient = Ingredient(name=ingredient["name"], unit=ingredient["unit"])
                         newIngredient.insert()
                         ingredientId = newIngredient.id
+                    #ingredient mapping object
                     newIngredientMap = ingredientsPerReceipe(ingredient_id=ingredientId, receipe_id=id, amount=ingredient["amount"])
                     newIngredientMap.insert()
+            #TODO: reply with newly created object
             return jsonify({"success": True})
         except:
             abort (400)
 
-        
 
-        return jsonify({"success": True})
-        
+    #Definition of errorhandlers for the errors defined in the app 
+    
     @app.errorhandler(400)
     def err_bad_request(error):
         return jsonify({
