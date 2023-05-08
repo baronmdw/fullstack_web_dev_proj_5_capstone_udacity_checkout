@@ -48,6 +48,7 @@ class TriviaTestCase(unittest.TestCase):
 
     #TODO: def test_post_receipes(self):
         # This test checks if adding a receipe via post request will work
+        #TODO: store id of created element
     
     #TODO: def test_post_receipes_unauthorized(self):
         # This test checks if a user will fail to post a receipe without being authorized
@@ -60,6 +61,7 @@ class TriviaTestCase(unittest.TestCase):
 
     #TODO: def test_delete_receipe(self):
         # This test checks if deleting a receipe works
+        #TODO: Use id of created element
 
     #TODO: def test_delete_receipe_not_existing(self):
         # This test checks if deleting a non-existing receipe will result in an error
