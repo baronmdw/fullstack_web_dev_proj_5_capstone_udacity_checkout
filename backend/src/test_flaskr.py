@@ -31,7 +31,7 @@ class TriviaTestCase(unittest.TestCase):
         pass
 
     def test_get_hello(self):
-        # This test tests for the correct transmission of all categories
+        # This test tests for general health status of the server
         res = self.client().get("/")
         content = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
@@ -43,6 +43,14 @@ class TriviaTestCase(unittest.TestCase):
         content = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertGreaterEqual(len(content["receipes"].keys()), 1)
+
+    # TODO: def test_get_receipes_unauthorized(self):
+        #this test checks if an unauthorized user will be neglected to receive receipes
+    
+    #TODO: def test_post_receipes(self):
+        # This test checks if adding a receipe via post request will work
+    
+    #TODO: def test_post_receipes_unauthorized(self):
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
