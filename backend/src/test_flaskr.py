@@ -72,8 +72,6 @@ class TriviaTestCase(unittest.TestCase):
     #TODO: def test_patch_receipe_wrong(self):
         # This test checks if updating a receipe with wrong input results in an error
 
-    
-
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()
