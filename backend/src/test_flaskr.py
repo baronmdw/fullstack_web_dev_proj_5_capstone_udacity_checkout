@@ -46,11 +46,20 @@ class TriviaTestCase(unittest.TestCase):
 
     # TODO: def test_get_receipes_unauthorized(self):
         #this test checks if an unauthorized user will be neglected to receive receipes
-    
+
     #TODO: def test_post_receipes(self):
         # This test checks if adding a receipe via post request will work
     
     #TODO: def test_post_receipes_unauthorized(self):
+        # This test checks if a user will fail to post a receipe without being authorized
+
+    #TODO: def test_get_single_receipe(self):
+        # This test checks if getting a single receipes details works correctly
+    
+    #TODO: def test_get_single_receipe_wrong_id(self):
+        # This test checks if trying to access a non-existent receipe will result in an error
+
+    
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
