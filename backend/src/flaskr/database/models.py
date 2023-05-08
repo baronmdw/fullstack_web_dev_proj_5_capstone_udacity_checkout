@@ -99,7 +99,10 @@ class Receipes(db.Model):
     # genres = db.relationship('Genre', secondary=Genremap, backref=db.backref('artist', lazy=True), overlaps="genres,venue")
         # artist = db.relationship('Artist', secondary='Show', backref=db.backref('venue', lazy=True), overlaps="venue,venue_shows")
 
-
+    def update(self, name, description):
+        self.name = name
+        self.description = description
+        db.session.commit()
 
     def __init__(self, name, description):
         self.name = name

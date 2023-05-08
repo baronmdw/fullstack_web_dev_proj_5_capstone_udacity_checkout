@@ -88,7 +88,33 @@ def create_app(dbURI='', test_config=None):
         [ingr.delete() for ingr in ingredientMap]
         receipe = Receipes.query.get(id)
         receipe.delete()
+        return jsonify({"success": True})
 
+    @app.route("/receipes/<int:id>", methods=["PATCH"])
+    @cross_origin()
+    def update_receipe(id):
+        try:
+            inputData = request.get_json()
+            ingredientMap = ingredientsPerReceipe.query.filter_by(receipe_id = id)
+            [ingr.delete() for ingr in ingredientMap]
+            receipe = Receipes.query.get(id)
+            print("found receipe: ", receipe)
+            receipe.update(name = inputData["name"], description = inputData["receipe"])
+            for ingredient in inputData["ingredients"]:
+                    existingIngredient = Ingredient.query.filter(Ingredient.name.ilike(ingredient["name"]), Ingredient.unit.ilike(ingredient["unit"])).one_or_none()
+                    if existingIngredient:
+                        ingredientId = existingIngredient.id
+                    else:
+                        newIngredient = Ingredient(name=ingredient["name"], unit=ingredient["unit"])
+                        newIngredient.insert()
+                        ingredientId = newIngredient.id
+                    newIngredientMap = ingredientsPerReceipe(ingredient_id=ingredientId, receipe_id=id, amount=ingredient["amount"])
+                    newIngredientMap.insert()
+            return jsonify({"success": True})
+        except:
+            abort (400)
+
+        
 
         return jsonify({"success": True})
         
