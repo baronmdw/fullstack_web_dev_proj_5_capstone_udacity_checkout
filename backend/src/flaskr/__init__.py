@@ -3,6 +3,7 @@ from flask import Flask, request, abort, jsonify
 from flask_cors import CORS, cross_origin
 from .database.models import setup_db, Connectiontest, Receipes, Ingredient, ingredientsPerReceipe, db
 from flask_migrate import Migrate
+from .auth.auth import AuthError, requires_auth
 
 #Setup App
 def create_app(dbURI='', test_config=None):
@@ -29,7 +30,8 @@ def create_app(dbURI='', test_config=None):
     #this endpoint serves to make a healthcheck of the server including the database
     @app.route("/")
     @cross_origin()
-    def index():
+    def index(payload):
+        print("got here")
         #connectiontest model just serves for checking the health
         connections = Connectiontest.query.all()
         connections_formatted = [c.format() for c in connections]
@@ -40,6 +42,7 @@ def create_app(dbURI='', test_config=None):
     @app.route("/receipes", methods=["GET"])
     #TODO: enable authorization check, read role
     #TODO: errorhandling
+    @requires_auth("get:receipes")
     @cross_origin()
     def get_receipes():
         #query all receipes and format them for readability in the frontend
@@ -56,8 +59,9 @@ def create_app(dbURI='', test_config=None):
     @app.route("/receipes", methods=["POST"])
     #TODO: enable authorization check, create role
     #TODO: better errorhandling
+    @requires_auth("post:receipes")
     @cross_origin()
-    def post_receipe():
+    def post_receipe(payload):
         #get content of the request
         inputReceipe = request.get_json()
         try:
@@ -88,8 +92,9 @@ def create_app(dbURI='', test_config=None):
     @app.route("/receipes/<int:id>", methods=["GET"])
     #TODO: authorizationcheck, read role
     #TODO: errorhandling
+    @requires_auth("get:receipes")
     @cross_origin()
-    def get_receipe(id):
+    def get_receipe(payload,id):
         #query the receipe from the database and format it
         receipe = Receipes.query.get(id)
         receipeToSend = receipe.format()
@@ -108,8 +113,9 @@ def create_app(dbURI='', test_config=None):
     @app.route("/receipes/<int:id>", methods=["DELETE"])
     #TODO: authorization, create role
     #TODO: errorhandling
+    @requires_auth("delete:receipes")
     @cross_origin()
-    def delete_receipe(id):
+    def delete_receipe(payload,id):
         #query the ingredientsmapping objects that belong to the receipe item and delete each one of them
         ingredientMap = ingredientsPerReceipe.query.filter_by(receipe_id = id)
         [ingr.delete() for ingr in ingredientMap]
@@ -122,8 +128,9 @@ def create_app(dbURI='', test_config=None):
     @app.route("/receipes/<int:id>", methods=["PATCH"])
     #TODO: authorization, create role
     #TODO: errorhandling
+    @requires_auth("patch:receipes")
     @cross_origin()
-    def update_receipe(id):
+    def update_receipe(payload,id):
         try:
             #get the input data object, query all ingredients belonging to the receipe and delete them
             inputData = request.get_json()
