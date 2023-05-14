@@ -16,9 +16,6 @@ import { WeekplanComponent } from './weekplan/weekplan.component';
 import { ReceipesComponent } from './receipes/receipes.component';
 import { MatCardModule } from '@angular/material/card'; 
 
-import { AuthModule } from '@auth0/auth0-angular';
-import { AppAuthButtonComponent } from './app-auth-button/app-auth-button.component';
-
 
 @NgModule({
   declarations: [
@@ -26,7 +23,6 @@ import { AppAuthButtonComponent } from './app-auth-button/app-auth-button.compon
     GrocerylistComponent,
     WeekplanComponent,
     ReceipesComponent,
-    AppAuthButtonComponent
   ],
   imports: [
     BrowserModule,
@@ -40,13 +36,6 @@ import { AppAuthButtonComponent } from './app-auth-button/app-auth-button.compon
     MatInputModule,
     FormsModule,
     MatCardModule,
-    AuthModule.forRoot({
-      domain: 'fsnd-mdw.eu.auth0.com',
-      clientId: 'wMgoDyWEm8SfKtlSU3RzApCjpbYeL9Dt',
-      authorizationParams: {
-        redirect_uri: window.location.origin
-      }
-    }),
   ],
   providers: [],
   bootstrap: [AppComponent]
