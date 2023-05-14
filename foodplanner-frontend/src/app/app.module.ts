@@ -16,6 +16,12 @@ import { WeekplanComponent } from './weekplan/weekplan.component';
 import { ReceipesComponent } from './receipes/receipes.component';
 import { MatCardModule } from '@angular/material/card'; 
 
+import { JwtModule } from "@auth0/angular-jwt";
+import { TokenKeeperService } from "./token-keeper.service";
+
+
+import { from } from 'rxjs';
+
 
 @NgModule({
   declarations: [
@@ -35,7 +41,15 @@ import { MatCardModule } from '@angular/material/card';
     MatIconModule,
     MatInputModule,
     FormsModule,
-    MatCardModule
+    MatCardModule,
+    JwtModule,
+    // JwtModule.forRoot({
+    //   config: {
+    //     tokenGetter: tokenGetter,
+    //     allowedDomains: ["example.com"],
+    //     disallowedRoutes: ["http://example.com/examplebadroute/"],
+    //   },
+    // }),
   ],
   providers: [],
   bootstrap: [AppComponent]
