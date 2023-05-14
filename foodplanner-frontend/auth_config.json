@@ -1,7 +1,9 @@
 {
-    "domain": "fsnd-mdw.eu.auth0.com",
-    "clientId": "wMgoDyWEm8SfKtlSU3RzApCjpbYeL9Dt"
 
+    "url": "fsnd-mdw.eu.auth0.com",
+    "audience": "foodplaner_api",
+    "clientId": "wMgoDyWEm8SfKtlSU3RzApCjpbYeL9Dt",
+    "callbackURL": "http://localhost:4200"
 }
 
    
