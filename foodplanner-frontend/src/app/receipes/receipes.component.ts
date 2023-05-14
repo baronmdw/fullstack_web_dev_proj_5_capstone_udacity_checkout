@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../auth.service';
+
 
 @Component({
   selector: 'app-receipes',
@@ -14,11 +16,14 @@ export class ReceipesComponent implements OnInit {
   showReceipe = false;
   currentReceipe = {"name": "Spaghetti", "description": "fare niente", "id": 0};
   editReceipeMode = false;
+  loginURL: string;
   // Form variables
   receipeName = "";
   receipeDescription = "";
 
-  constructor(private _http:HttpClient) { }
+  constructor(private _http:HttpClient, public auth: AuthService) {
+    this.loginURL = auth.build_login_link('');
+   }
 
   ngOnInit(): void {
     this.loadReceipes();
@@ -124,4 +129,5 @@ export class ReceipesComponent implements OnInit {
     this.receipeName = this.currentReceipe.name;
     this.receipeDescription = this.currentReceipe.description;
   }
+
 }
