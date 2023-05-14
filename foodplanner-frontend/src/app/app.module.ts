@@ -16,6 +16,8 @@ import { WeekplanComponent } from './weekplan/weekplan.component';
 import { ReceipesComponent } from './receipes/receipes.component';
 import { MatCardModule } from '@angular/material/card'; 
 
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TokenInterceptor } from './token.interceptor';
 
 @NgModule({
   declarations: [
@@ -37,7 +39,13 @@ import { MatCardModule } from '@angular/material/card';
     FormsModule,
     MatCardModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    } 
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

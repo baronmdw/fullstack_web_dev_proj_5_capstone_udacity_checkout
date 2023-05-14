@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 
 import { environment } from '../environments/environment';
@@ -55,6 +56,7 @@ export class AuthService {
 
   load_jwts() {
     this.token = localStorage.getItem(JWTS_LOCAL_KEY) || "";
+    console.log(this.token)
     if (this.token) {
       this.decodeJWT(this.token);
     }
@@ -74,5 +76,13 @@ export class AuthService {
     this.token = '';
     this.payload = null;
     this.set_jwt();
+  }
+
+  getHeaders() {
+    const header = {
+      headers: new HttpHeaders()
+        .set('Authorization',  `Bearer ${this.activeJWT()}`)
+    };
+    return header;
   }
 }

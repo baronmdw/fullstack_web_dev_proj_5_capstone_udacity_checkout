@@ -28,6 +28,7 @@ This Method checks if there is an Authorization header included in the request a
 '''
 def get_token_auth_header():
     try:
+        print(dict(request.headers))
         # check for Authorization header, extract it and check against emptyness
         if "Authorization" not in request.headers:
             raise AuthError(error={"code":"invalid header", "description": "header does not contain authorization token"}, status_code=401)
@@ -109,10 +110,13 @@ def requires_auth(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            token = get_token_auth_header()
-            payload = verify_decode_jwt(token)
-            check_permissions(permission, payload)
-            return f(payload, *args, **kwargs)
+            if request.method == "OPTIONS":
+                return f(*args, **kwargs)
+            else:
+                token = get_token_auth_header()
+                payload = verify_decode_jwt(token)
+                check_permissions(permission, payload)
+                return f(payload, *args, **kwargs)
 
         return wrapper
     return requires_auth_decorator

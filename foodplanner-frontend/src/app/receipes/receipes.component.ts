@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../auth.service';
 
 
@@ -130,4 +130,12 @@ export class ReceipesComponent implements OnInit {
     this.receipeDescription = this.currentReceipe.description;
   }
 
+  getHeaders() {
+    console.log(`Bearer ${localStorage.getItem("JWTS_LOCAL_KEY")}`)
+    const header= {
+      headers: new HttpHeaders()
+      .set('Authorization', `Bearer ${localStorage.getItem("JWTS_LOCAL_KEY")}`)
+    };
+    return header;
+  }
 }

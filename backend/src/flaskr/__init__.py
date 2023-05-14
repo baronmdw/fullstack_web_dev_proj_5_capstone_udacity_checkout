@@ -26,6 +26,7 @@ def create_app(dbURI='', test_config=None):
 
     #enable cors
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+    # CORS(app)
 
     #this endpoint serves to make a healthcheck of the server including the database
     @app.route("/")
@@ -39,21 +40,24 @@ def create_app(dbURI='', test_config=None):
         return (connections_formatted)
     
     #this endpoint serves to get all receipes included in the database on a high level
-    @app.route("/receipes", methods=["GET"])
+    @app.route("/receipes", methods=["GET", "OPTIONS"])
     #TODO: enable authorization check, read role
     #TODO: errorhandling
     @requires_auth("get:receipes")
     @cross_origin()
-    def get_receipes():
-        #query all receipes and format them for readability in the frontend
-        receipes = Receipes.query.all()
-        receipes_formatted = [r.format() for r in receipes]
-        #create responseobject with successstats and the formatted receipelist
-        responseObject = {
-            "success": True,
-            "receipes": receipes_formatted
-        }
-        return jsonify(responseObject)
+    def get_receipes(payload):
+        if request.method == "OPTIONS":
+            return jsonify("OK")
+        elif request.method == "GET":
+            #query all receipes and format them for readability in the frontend
+            receipes = Receipes.query.all()
+            receipes_formatted = [r.format() for r in receipes]
+            #create responseobject with successstats and the formatted receipelist
+            responseObject = {
+                "success": True,
+                "receipes": receipes_formatted
+            }
+            return jsonify(responseObject)
 
     #this endpoint serves to post a new receipe to the database
     @app.route("/receipes", methods=["POST"])
@@ -89,7 +93,7 @@ def create_app(dbURI='', test_config=None):
             abort(400)
     
     #this endpoint serves to get the details of one receipe
-    @app.route("/receipes/<int:id>", methods=["GET"])
+    @app.route("/receipes/<int:id>", methods=["GET", "OPTIONS"])
     #TODO: authorizationcheck, read role
     #TODO: errorhandling
     @requires_auth("get:receipes")
@@ -110,7 +114,7 @@ def create_app(dbURI='', test_config=None):
         return jsonify({"receipe": receipeToSend, "ingredients": ingredients})
     
     #this endpoint serves to delete a specific receipe item
-    @app.route("/receipes/<int:id>", methods=["DELETE"])
+    @app.route("/receipes/<int:id>", methods=["DELETE", "OPTIONS"])
     #TODO: authorization, create role
     #TODO: errorhandling
     @requires_auth("delete:receipes")
@@ -125,7 +129,7 @@ def create_app(dbURI='', test_config=None):
         return jsonify({"success": True})
     
     #this endpoint serves to change a receipe item
-    @app.route("/receipes/<int:id>", methods=["PATCH"])
+    @app.route("/receipes/<int:id>", methods=["PATCH", "OPTIONS"])
     #TODO: authorization, create role
     #TODO: errorhandling
     @requires_auth("patch:receipes")
