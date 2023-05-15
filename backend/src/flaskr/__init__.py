@@ -162,9 +162,8 @@ def create_app(dbURI='', test_config=None):
         except:
             abort (400)
 
-
     #Definition of errorhandlers for the errors defined in the app 
-    
+
     @app.errorhandler(400)
     def err_bad_request(error):
         return jsonify({
