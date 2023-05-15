@@ -32,7 +32,6 @@ def create_app(dbURI='', test_config=None):
     @app.route("/")
     @cross_origin()
     def index(payload):
-        print("got here")
         #connectiontest model just serves for checking the health
         connections = Connectiontest.query.all()
         connections_formatted = [c.format() for c in connections]

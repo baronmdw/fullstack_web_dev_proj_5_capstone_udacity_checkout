@@ -28,7 +28,6 @@ This Method checks if there is an Authorization header included in the request a
 '''
 def get_token_auth_header():
     try:
-        print(dict(request.headers))
         # check for Authorization header, extract it and check against emptyness
         if "Authorization" not in request.headers:
             raise AuthError(error={"code":"invalid header", "description": "header does not contain authorization token"}, status_code=401)
