@@ -5,7 +5,7 @@ COPY . /app
 WORKDIR /app
 
 RUN npm install
-RUN npm build --prod
+RUN npm run build --prod
 #Stage 2
 FROM nginx:alpine
 COPY --from=node /app/dist/angular-app /usr/share/nginx/html
