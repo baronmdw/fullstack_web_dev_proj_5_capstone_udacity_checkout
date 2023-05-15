@@ -35,7 +35,7 @@ def create_app(dbURI='', test_config=None):
     #this endpoint serves to make a healthcheck of the server including the database
     @app.route("/")
     @cross_origin()
-    def index(payload):
+    def index():
         #connectiontest model just serves for checking the health
         connections = Connectiontest.query.all()
         connections_formatted = [c.format() for c in connections]
