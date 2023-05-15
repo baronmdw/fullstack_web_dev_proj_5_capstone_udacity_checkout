@@ -1,10 +1,10 @@
 export const environment = {
   production: true,
-  auth0: {
-    url: process.env["url"], // the auth0 domain prefix
-    audience: process.env["audience"], // the audience set for the auth0 app
-    clientId: process.env["clientId"], // the client id generated for the auth0 app
-    callbackURL: process.env["callbackURL"], // the base url of the running ionic application. 
+    auth0: {
+    url: require("../../auth_config.json").url, // the auth0 domain prefix
+    audience: require("../../auth_config.json").audience, // the audience set for the auth0 app
+    clientId: require("../../auth_config.json").clientId, // the client id generated for the auth0 app
+    callbackURL: require("../../auth_config.json").callbackURL, // the base url of the running ionic application. 
   },
-  apiServerUrl: process.env["apiServerUrl"]
+  apiServerUrl: "https://foodplanner-backend.onrender.com",
 };
