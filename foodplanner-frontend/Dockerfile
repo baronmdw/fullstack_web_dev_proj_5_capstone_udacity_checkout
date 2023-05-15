@@ -8,4 +8,4 @@ RUN npm install
 RUN npm run build --prod
 #Stage 2
 FROM nginx:alpine
-COPY --from=node /app/dist/angular-app /usr/share/nginx/html
+COPY --from=node /app/dist/foodplanner-frontend /usr/share/nginx/html
