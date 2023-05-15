@@ -10,7 +10,6 @@ def create_app(dbURI='', test_config=None):
     # read environment variables if not in Testmode
     if dbURI == "":
         if os.environ.get("FLASK_DEBUG") == "1": 
-            print("debugging: ", os.environ.get("FLASK_DEBUG"))  
             DB_HOST = os.environ.get("DB_HOST")
             DB_USER = os.environ.get("DB_USER")
             DB_PASSWORD = os.environ.get("DB_PASSWORD")
