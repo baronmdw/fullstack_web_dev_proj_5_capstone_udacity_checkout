@@ -20,7 +20,6 @@ class TriviaTestCase(unittest.TestCase):
         self.DB_TEST_NAME = os.environ.get("DB_TEST_NAME")
         self.DB_TEST_PORT = os.environ.get("DB_PORT")
         self.database_path = 'postgresql://{}:{}@{}:{}/{}'.format(self.DB_TEST_USER,self.DB_TEST_PASSWORD,self.DB_TEST_HOST, self.DB_TEST_PORT, self.DB_TEST_NAME)
-        print(self.database_path)
         self.app = create_app(self.database_path)
         with self.app.app_context():
             upgrade()
@@ -49,6 +48,7 @@ class TriviaTestCase(unittest.TestCase):
 
     #TODO: def test_post_receipes(self):
         # This test checks if adding a receipe via post request will work
+        #TODO: store id of created element
     
     #TODO: def test_post_receipes_unauthorized(self):
         # This test checks if a user will fail to post a receipe without being authorized
@@ -59,7 +59,18 @@ class TriviaTestCase(unittest.TestCase):
     #TODO: def test_get_single_receipe_wrong_id(self):
         # This test checks if trying to access a non-existent receipe will result in an error
 
-    
+    #TODO: def test_delete_receipe(self):
+        # This test checks if deleting a receipe works
+        #TODO: Use id of created element
+
+    #TODO: def test_delete_receipe_not_existing(self):
+        # This test checks if deleting a non-existing receipe will result in an error
+
+    #TODO: def test_patch_receipe(self):
+        # This test checks if updating a receipe works
+
+    #TODO: def test_patch_receipe_wrong(self):
+        # This test checks if updating a receipe with wrong input results in an error
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
