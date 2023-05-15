@@ -9,12 +9,16 @@ from .auth.auth import AuthError, requires_auth
 def create_app(dbURI='', test_config=None):
     # read environment variables if not in Testmode
     if dbURI == "":
-        DB_HOST = os.environ.get("DB_HOST")
-        DB_USER = os.environ.get("DB_USER")
-        DB_PASSWORD = os.environ.get("DB_PASSWORD")
-        DB_NAME = os.environ.get("DB_NAME")
-        DB_PORT = os.environ.get("DB_PORT")
-        dbURI = 'postgresql://{}:{}@{}:{}/{}'.format(DB_USER,DB_PASSWORD,DB_HOST,DB_PORT,DB_NAME)
+        if os.environ.get("FLASK_DEBUG") == 1:   
+            DB_HOST = os.environ.get("DB_HOST")
+            DB_USER = os.environ.get("DB_USER")
+            DB_PASSWORD = os.environ.get("DB_PASSWORD")
+            DB_NAME = os.environ.get("DB_NAME")
+            DB_PORT = os.environ.get("DB_PORT")
+            dbURI = 'postgresql://{}:{}@{}:{}/{}'.format(DB_USER,DB_PASSWORD,DB_HOST,DB_PORT,DB_NAME)
+        else:
+            DB_URL = os.environ.get("DB_URL")
+            dbURI = DB_URL
 
     #initialize app   
     app = Flask(__name__)

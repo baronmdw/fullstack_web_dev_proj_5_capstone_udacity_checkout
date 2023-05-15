@@ -14,7 +14,7 @@ Mako==1.2.4
 MarkupSafe==2.1.2
 psycopg2-binary==2.9.6
 pyasn1==0.5.0
-python-dotenv==1.0.0
+# python-dotenv==1.0.0
 python-jose==3.3.0
 rsa==4.9
 six==1.16.0
