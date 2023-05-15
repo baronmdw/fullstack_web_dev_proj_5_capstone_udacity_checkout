@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../auth.service';
 
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-receipes',
@@ -31,7 +32,7 @@ export class ReceipesComponent implements OnInit {
 
   // This function loads the receipes by addressing the get-endpoint for reading all receipes and putting the result to the respective variable
   loadReceipes(){
-    const response = this._http.get('http://localhost:5000/receipes')
+    const response = this._http.get(environment.apiServerUrl+'/receipes')
     .subscribe((res) =>{
       const resultString = JSON.stringify(res);
       let resultJSON = JSON.parse(resultString);
@@ -58,14 +59,14 @@ export class ReceipesComponent implements OnInit {
   submitReceipe(data:any){
     if (!this.editReceipeMode){
       // create new receipe
-      const response = this._http.post('http://localhost:5000/receipes', {"name":data.form.controls.name.value, "receipe": data.form.controls.receipe.value, "ingredients": this.receipeIngredients}).subscribe(response => {
+      const response = this._http.post(environment.apiServerUrl+'/receipes', {"name":data.form.controls.name.value, "receipe": data.form.controls.receipe.value, "ingredients": this.receipeIngredients}).subscribe(response => {
         this.openForm = false;
         this.loadReceipes();
         data.form.reset()
       });
     } else {
       // update existing receipe
-      const response = this._http.patch('http://localhost:5000/receipes/'+this.currentReceipe.id, {"name":data.form.controls.name.value, "receipe": data.form.controls.receipe.value, "ingredients": this.receipeIngredients}).subscribe(response => {
+      const response = this._http.patch(environment.apiServerUrl+'/receipes/'+this.currentReceipe.id, {"name":data.form.controls.name.value, "receipe": data.form.controls.receipe.value, "ingredients": this.receipeIngredients}).subscribe(response => {
         this.openForm = false;
         this.editReceipeMode = false;
         this.loadReceipes();
@@ -76,7 +77,7 @@ export class ReceipesComponent implements OnInit {
 
   // this function calls the api to get the details of a receipe, saves them to the corresponding variables, closes the input form and opens the receipe form
   openReceipe(receipe:number) {
-    const response = this._http.get('http://localhost:5000/receipes/'+receipe)
+    const response = this._http.get(environment.apiServerUrl+'/receipes/'+receipe)
     .subscribe((res) =>{
       const resultString = JSON.stringify(res);
       let resultJSON = JSON.parse(resultString);
@@ -104,7 +105,7 @@ export class ReceipesComponent implements OnInit {
 
   // this function calls the api to delete a specific receipe
   deleteReceipe(){
-    const response = this._http.delete('http://localhost:5000/receipes/'+this.currentReceipe.id)
+    const response = this._http.delete(environment.apiServerUrl+'/receipes/'+this.currentReceipe.id)
     .subscribe((res)=> {
       this.closeReceipe();
       this.loadReceipes();

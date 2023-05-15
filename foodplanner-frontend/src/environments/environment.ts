@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  apiServerUrl: 'http://127.0.0.1:5000', // the running FLASK api server url
+  apiServerUrl: require("../../backend_config.json").backend_url, // the running FLASK api server url
   auth0: {
     url: require("../../auth_config.json").url, // the auth0 domain prefix
     audience: require("../../auth_config.json").audience, // the audience set for the auth0 app
