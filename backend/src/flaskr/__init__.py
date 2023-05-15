@@ -59,7 +59,7 @@ def create_app(dbURI='', test_config=None):
             return jsonify(responseObject)
 
     #this endpoint serves to post a new receipe to the database
-    @app.route("/receipes", methods=["POST"])
+    @app.route("/receipes", methods=["POST", "OPTIONS"])
     #TODO: enable authorization check, create role
     #TODO: better errorhandling
     @requires_auth("post:receipes")
@@ -131,7 +131,7 @@ def create_app(dbURI='', test_config=None):
     @app.route("/receipes/<int:id>", methods=["PATCH", "OPTIONS"])
     #TODO: authorization, create role
     #TODO: errorhandling
-    @requires_auth("patch:receipes")
+    @requires_auth("patch:receipe")
     @cross_origin()
     def update_receipe(payload,id):
         try:
