@@ -5,6 +5,7 @@ from .database.models import setup_db, Connectiontest, Receipes, Ingredient, ing
 from flask_migrate import Migrate
 from .auth.auth import AuthError, requires_auth
 from werkzeug.exceptions import HTTPException
+import secrets
 
 
 #Setup App
@@ -25,6 +26,9 @@ def create_app(dbURI='', test_config=None):
     #initialize app   
     app = Flask(__name__)
     app.config.from_mapping(SQLALCHEMY_DATABASE_URI=dbURI)
+
+    random_key=secrets.token_hex(16)
+    app.secret_key = random_key
 
     #setup database connection
     setup_db(app, dbURI)
