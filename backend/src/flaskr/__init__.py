@@ -4,6 +4,8 @@ from flask_cors import CORS, cross_origin
 from .database.models import setup_db, Connectiontest, Receipes, Ingredient, ingredientsPerReceipe, db
 from flask_migrate import Migrate
 from .auth.auth import AuthError, requires_auth
+from werkzeug.exceptions import HTTPException
+
 
 #Setup App
 def create_app(dbURI='', test_config=None):
@@ -49,18 +51,25 @@ def create_app(dbURI='', test_config=None):
     @requires_auth("get:receipes", test_config)
     @cross_origin()
     def get_receipes(payload):
-        if request.method == "OPTIONS":
-            return jsonify("OK")
-        elif request.method == "GET":
-            #query all receipes and format them for readability in the frontend
-            receipes = Receipes.query.all()
-            receipes_formatted = [r.format() for r in receipes]
-            #create responseobject with successstats and the formatted receipelist
-            responseObject = {
-                "success": True,
-                "receipes": receipes_formatted
-            }
-            return jsonify(responseObject)
+        try:
+            if request.method == "GET":
+                #query all receipes and format them for readability in the frontend
+                receipes = Receipes.query.all()
+                receipes_formatted = [r.format() for r in receipes]
+                #create responseobject with successstats and the formatted receipelist
+                responseObject = {
+                    "success": True,
+                    "receipes": receipes_formatted
+                }
+                return jsonify(responseObject)
+        except Exception as e:
+            if isinstance(e, HTTPException):
+                abort(e.code)
+            elif isinstance(e, AuthError):
+                abort(e)
+            else:
+                abort(422)
+
 
     #this endpoint serves to post a new receipe to the database
     @app.route("/receipes", methods=["POST", "OPTIONS"])
@@ -91,45 +100,62 @@ def create_app(dbURI='', test_config=None):
                 newIngredientMap.insert()
             #TODO: add new object id to response
             return jsonify({"success": True})
-        except:
+        except Exception as e:
             db.session.rollback()
-            abort(400)
+            if isinstance(e, HTTPException):
+                abort(e.code)
+            elif isinstance(e, AuthError):
+                abort(e)
+            else:
+                abort(400)
     
     #this endpoint serves to get the details of one receipe
     @app.route("/receipes/<int:id>", methods=["GET", "OPTIONS"])
-    #TODO: authorizationcheck, read role
-    #TODO: errorhandling
     @requires_auth("get:receipes", test_config)
     @cross_origin()
     def get_receipe(payload,id):
-        #query the receipe from the database and format it
-        receipe = Receipes.query.get(id)
-        receipeToSend = receipe.format()
-        #query the ingredient ids and amounts connected to the receipe and format them
-        ingredientMap = ingredientsPerReceipe.query.filter_by(receipe_id = id)
-        ingredientMapFormatted = [item.format() for item in ingredientMap]
-        ingredients = []
-        #get the ingredient name and unit and put it to the ingredient object array
-        for ingredientMapElement in ingredientMapFormatted:
-            ingredientToAdd = Ingredient.query.get(ingredientMapElement["ingredient_id"])
-            ingredientOfInterest = ingredientToAdd.format()
-            ingredients.append({"id": ingredientOfInterest["id"], "name": ingredientOfInterest["name"], "amount": ingredientMapElement["amount"], "unit": ingredientOfInterest["unit"]})
-        return jsonify({"receipe": receipeToSend, "ingredients": ingredients})
+        try: 
+            #query the receipe from the database and format it
+            receipe = Receipes.query.get(id)
+            receipeToSend = receipe.format()
+            #query the ingredient ids and amounts connected to the receipe and format them
+            ingredientMap = ingredientsPerReceipe.query.filter_by(receipe_id = id)
+            ingredientMapFormatted = [item.format() for item in ingredientMap]
+            ingredients = []
+            #get the ingredient name and unit and put it to the ingredient object array
+            for ingredientMapElement in ingredientMapFormatted:
+                ingredientToAdd = Ingredient.query.get(ingredientMapElement["ingredient_id"])
+                ingredientOfInterest = ingredientToAdd.format()
+                ingredients.append({"id": ingredientOfInterest["id"], "name": ingredientOfInterest["name"], "amount": ingredientMapElement["amount"], "unit": ingredientOfInterest["unit"]})
+            return jsonify({"receipe": receipeToSend, "ingredients": ingredients})
+        except Exception as e:
+            if isinstance(e, HTTPException):
+                abort(e.code)
+            elif isinstance(e, AuthError):
+                abort(e)
+            else:
+                abort(404)
     
     #this endpoint serves to delete a specific receipe item
     @app.route("/receipes/<int:id>", methods=["DELETE", "OPTIONS"])
-    #TODO: authorization, create role
-    #TODO: errorhandling
     @requires_auth("delete:receipes", test_config)
     @cross_origin()
     def delete_receipe(payload,id):
-        #query the ingredientsmapping objects that belong to the receipe item and delete each one of them
-        ingredientMap = ingredientsPerReceipe.query.filter_by(receipe_id = id)
-        [ingr.delete() for ingr in ingredientMap]
-        #query the receipe object and delete it
-        receipe = Receipes.query.get(id)
-        receipe.delete()
-        return jsonify({"success": True})
+        try:
+            #query the ingredientsmapping objects that belong to the receipe item and delete each one of them
+            ingredientMap = ingredientsPerReceipe.query.filter_by(receipe_id = id)
+            [ingr.delete() for ingr in ingredientMap]
+            #query the receipe object and delete it
+            receipe = Receipes.query.get(id)
+            receipe.delete()
+            return jsonify({"success": True})
+        except Exception as e:
+            if isinstance(e, HTTPException):
+                abort(e.code)
+            elif isinstance(e, AuthError):
+                abort(e)
+            else:
+                abort(422)
     
     #this endpoint serves to change a receipe item
     @app.route("/receipes/<int:id>", methods=["PATCH", "OPTIONS"])
@@ -163,8 +189,14 @@ def create_app(dbURI='', test_config=None):
                     newIngredientMap.insert()
             #TODO: reply with newly created object
             return jsonify({"success": True})
-        except:
-            abort (400)
+        except Exception as e:
+            db.session.rollback()
+            if isinstance(e, HTTPException):
+                abort(e.code)
+            elif isinstance(e, AuthError):
+                abort(e)
+            else:
+                abort(400)
 
 
     #Definition of errorhandlers for the errors defined in the app 
