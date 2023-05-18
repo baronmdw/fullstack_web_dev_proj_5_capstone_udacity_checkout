@@ -78,12 +78,10 @@ def verify_decode_jwt(token, test_config):
             auth0_domain = test_config["AUTH0_DOMAIN"]
             algorithms = test_config["ALGORITHMS"]
             api_audience = test_config["API_AUDIENCE"]
-            print("updated")
         else:
             auth0_domain = AUTH0_DOMAIN
             algorithms = ALGORITHMS
             api_audience = API_AUDIENCE
-            print("kept")
         # get token-kid of header and currently valid token-kids from Auth0
         tokenKid = jwt.get_unverified_header(token)["kid"]
         response = urlopen("https://"+auth0_domain+"/.well-known/jwks.json")
