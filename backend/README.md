@@ -58,7 +58,7 @@ FLASK_DEBUG=1
 Having set all this you will be able to start the backend by prompting flask run while being cd-ed in the backend/src folder.
 
 ## Running the tests
-The tests are based on unittest, the database does not need to be populated since it will start with a post request end end with a delete request deleting the same object again. Run the tests with:
+The tests are based on unittest, the database does not need to be populated since it will start with a post request end end with a delete request deleting the same object again. Run the tests while being cd-ed into backend-src with:
 
 ```console
 python test_flaskr.py
