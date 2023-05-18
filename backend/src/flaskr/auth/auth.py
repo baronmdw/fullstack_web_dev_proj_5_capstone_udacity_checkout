@@ -72,11 +72,21 @@ def check_permissions(permission, payload):
 '''
 This function checks if the token that was found in the header is currently valid and decodes the content using the authentication key from Auth0
 '''
-def verify_decode_jwt(token):
+def verify_decode_jwt(token, test_config):
     try:
+        if test_config is not None:
+            auth0_domain = test_config["AUTH0_DOMAIN"]
+            algorithms = test_config["ALGORITHMS"]
+            api_audience = test_config["API_AUDIENCE"]
+            print("updated")
+        else:
+            auth0_domain = AUTH0_DOMAIN
+            algorithms = ALGORITHMS
+            api_audience = API_AUDIENCE
+            print("kept")
         # get token-kid of header and currently valid token-kids from Auth0
         tokenKid = jwt.get_unverified_header(token)["kid"]
-        response = urlopen("https://"+AUTH0_DOMAIN+"/.well-known/jwks.json")
+        response = urlopen("https://"+auth0_domain+"/.well-known/jwks.json")
         responseBody = json.load(response)
         keyList = responseBody["keys"]
         authKey = None
@@ -93,7 +103,7 @@ def verify_decode_jwt(token):
         if authKey is None:
             raise AuthError(error={"code":"invalid header", "description": "token could not be found"}, status_code=401)
         # decode the JWT with the authentication key and return it as payload
-        payload = jwt.decode(token, key=authKey, algorithms=ALGORITHMS, audience=API_AUDIENCE, issuer="https://"+AUTH0_DOMAIN+"/")
+        payload = jwt.decode(token, key=authKey, algorithms=algorithms, audience=api_audience, issuer="https://"+auth0_domain+"/")
         return payload
     # errorhandling
     except Exception as e:
@@ -105,7 +115,7 @@ def verify_decode_jwt(token):
 '''
 This is the wrapper for the endpoints that require authorization it manages the authorization header and its comparison to the requested rights
 '''
-def requires_auth(permission=''):
+def requires_auth(permission='', test_config=None):
     def requires_auth_decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
@@ -113,7 +123,7 @@ def requires_auth(permission=''):
                 return f(*args, **kwargs)
             else:
                 token = get_token_auth_header()
-                payload = verify_decode_jwt(token)
+                payload = verify_decode_jwt(token, test_config)
                 check_permissions(permission, payload)
                 return f(payload, *args, **kwargs)
 
