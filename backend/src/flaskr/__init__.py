@@ -66,7 +66,7 @@ def create_app(dbURI='', test_config=None):
     @app.route("/receipes", methods=["POST", "OPTIONS"])
     #TODO: enable authorization check, create role
     #TODO: better errorhandling
-    @requires_auth("post:receipes")
+    @requires_auth("post:receipes", test_config)
     @cross_origin()
     def post_receipe(payload):
         #get content of the request
@@ -99,7 +99,7 @@ def create_app(dbURI='', test_config=None):
     @app.route("/receipes/<int:id>", methods=["GET", "OPTIONS"])
     #TODO: authorizationcheck, read role
     #TODO: errorhandling
-    @requires_auth("get:receipes")
+    @requires_auth("get:receipes", test_config)
     @cross_origin()
     def get_receipe(payload,id):
         #query the receipe from the database and format it
@@ -120,7 +120,7 @@ def create_app(dbURI='', test_config=None):
     @app.route("/receipes/<int:id>", methods=["DELETE", "OPTIONS"])
     #TODO: authorization, create role
     #TODO: errorhandling
-    @requires_auth("delete:receipes")
+    @requires_auth("delete:receipes", test_config)
     @cross_origin()
     def delete_receipe(payload,id):
         #query the ingredientsmapping objects that belong to the receipe item and delete each one of them
@@ -135,7 +135,7 @@ def create_app(dbURI='', test_config=None):
     @app.route("/receipes/<int:id>", methods=["PATCH", "OPTIONS"])
     #TODO: authorization, create role
     #TODO: errorhandling
-    @requires_auth("patch:receipe")
+    @requires_auth("patch:receipe", test_config)
     @cross_origin()
     def update_receipe(payload,id):
         try:
