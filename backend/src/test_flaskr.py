@@ -1,9 +1,11 @@
 import os
 import unittest
 import json
+import requests
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from flask_migrate import upgrade
+from unittest.mock import patch
 
 from flaskr import create_app
 from flaskr.database.models import setup_db, Connectiontest
@@ -11,6 +13,10 @@ from flaskr.database.models import setup_db, Connectiontest
 class TriviaTestCase(unittest.TestCase):
     """This class represents the trivia test case"""
 
+    # def mockenv(**envvars):
+    #     return mock.patch.dict(os.environ, envvars)
+
+    # @mockenv(AUTH0_DOMAIN=os.environ.get("AUTH0_DOMAIN"))
     def setUp(self):
         """Define test variables and initialize app."""
         load_dotenv()
@@ -20,11 +26,25 @@ class TriviaTestCase(unittest.TestCase):
         self.DB_TEST_NAME = os.environ.get("DB_TEST_NAME")
         self.DB_TEST_PORT = os.environ.get("DB_PORT")
         self.database_path = 'postgresql://{}:{}@{}:{}/{}'.format(self.DB_TEST_USER,self.DB_TEST_PASSWORD,self.DB_TEST_HOST, self.DB_TEST_PORT, self.DB_TEST_NAME)
-        self.app = create_app(self.database_path)
+
+        self.write_user = [os.environ.get("email_foodplanner"), os.environ.get("pwd_foodplanner")]
+        self.read_user = [os.environ.get("email_reader"), os.environ.get("pwd_reader")]
+       
+        self.write_user_jwt = os.environ.get("WRITE_JWT")
+        self.read_user_jwt = os.environ.get("READ_JWT")
+        self.test_config = {
+            "AUTH0_DOMAIN" : os.environ.get("AUTH0_DOMAIN"),
+            "ALGORITHMS" : [os.environ.get("ALGORITHMS")],
+            "API_AUDIENCE" : os.environ.get("API_AUDIENCE")
+        }
+
+        self.app = create_app(self.database_path, self.test_config)
         with self.app.app_context():
             upgrade()
         self.client = self.app.test_client
    
+
+
     def tearDown(self):
         """Executed after each test"""
         pass
@@ -38,10 +58,10 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_get_receipes(self):
         # This test tests for the correct transmission of all categories
-        res = self.client().get("/receipes")
+        res = self.client().get("/receipes", headers={"Authorization": 'Bearer {}'.format(self.read_user_jwt)})
         content = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
-        self.assertGreaterEqual(len(content["receipes"].keys()), 1)
+        self.assertGreaterEqual(len(content["receipes"]), 1)
 
     # TODO: def test_get_receipes_unauthorized(self):
         #this test checks if an unauthorized user will be neglected to receive receipes

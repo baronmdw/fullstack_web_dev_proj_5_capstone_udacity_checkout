@@ -46,7 +46,7 @@ def create_app(dbURI='', test_config=None):
     @app.route("/receipes", methods=["GET", "OPTIONS"])
     #TODO: enable authorization check, read role
     #TODO: errorhandling
-    @requires_auth("get:receipes")
+    @requires_auth("get:receipes", test_config)
     @cross_origin()
     def get_receipes(payload):
         if request.method == "OPTIONS":
