@@ -12,7 +12,6 @@ from flaskr.database.models import setup_db, Connectiontest
 
 class TriviaTestCase(unittest.TestCase):
     """This class represents the trivia test case"""
-
     # def mockenv(**envvars):
     #     return mock.patch.dict(os.environ, envvars)
 
@@ -37,6 +36,8 @@ class TriviaTestCase(unittest.TestCase):
             "ALGORITHMS" : [os.environ.get("ALGORITHMS")],
             "API_AUDIENCE" : os.environ.get("API_AUDIENCE")
         }
+        self.new_id = None
+
 
         self.app = create_app(self.database_path, self.test_config)
         with self.app.app_context():
@@ -56,6 +57,30 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertGreaterEqual(len(content[0].keys()), 1)
 
+    def test_post_receipes(self):
+        # This test checks if adding a receipe via post request will work
+        new_element = {
+            "name": "Test Receipe",
+            "receipe": "Add some testing",
+            "ingredients": [{"name": "Test Ingredient", "unit": "Test Unit", "amount": 1}]
+        }
+        res = self.client().post("/receipes", json=new_element, headers={"Authorization": 'Bearer {}'.format(self.write_user_jwt)})
+        content = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(content["success"], True)
+    
+    def test_post_receipes_unauthorized(self):
+        # This test checks if a user will fail to post a receipe without being authorized
+        new_element = {
+            "name": "Test Receipe",
+            "receipe": "Add some testing",
+            "ingredients": [{"name": "Test Ingredient", "unit": "Test Unit", "amount": 1}]
+        }
+        res = self.client().post("/receipes", json=new_element)
+        content = json.loads(res.data)
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(content["success"], False)
+
     def test_get_receipes(self):
         # This test tests for the correct transmission of all categories
         res = self.client().get("/receipes", headers={"Authorization": 'Bearer {}'.format(self.read_user_jwt)})
@@ -63,34 +88,82 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertGreaterEqual(len(content["receipes"]), 1)
 
-    # TODO: def test_get_receipes_unauthorized(self):
+    def test_get_receipes_unauthorized(self):
         #this test checks if an unauthorized user will be neglected to receive receipes
+        res = self.client().get("/receipes")
+        content = json.loads(res.data)
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(content["message"]["code"], "invalid header")
 
-    #TODO: def test_post_receipes(self):
-        # This test checks if adding a receipe via post request will work
-        #TODO: store id of created element
-    
-    #TODO: def test_post_receipes_unauthorized(self):
-        # This test checks if a user will fail to post a receipe without being authorized
-
-    #TODO: def test_get_single_receipe(self):
+    def test_get_single_receipe(self):
         # This test checks if getting a single receipes details works correctly
+        res = self.client().get('/receipes', headers={"Authorization": 'Bearer {}'.format(self.read_user_jwt)})
+        content = json.loads(res.data)
+        new_id = content["receipes"][-1]["id"]
+        res = self.client().get('/receipes/{}'.format(new_id), headers={"Authorization": 'Bearer {}'.format(self.read_user_jwt)})
+        content = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("Test Receipe",content["receipe"]["name"])
     
-    #TODO: def test_get_single_receipe_wrong_id(self):
+    def test_get_single_receipe_wrong_id(self):
         # This test checks if trying to access a non-existent receipe will result in an error
-
-    #TODO: def test_delete_receipe(self):
-        # This test checks if deleting a receipe works
-        #TODO: Use id of created element
-
-    #TODO: def test_delete_receipe_not_existing(self):
-        # This test checks if deleting a non-existing receipe will result in an error
-
-    #TODO: def test_patch_receipe(self):
+        res = self.client().get('/receipes', headers={"Authorization": 'Bearer {}'.format(self.read_user_jwt)})
+        content = json.loads(res.data)
+        nonexisting_id = content["receipes"][-1]["id"]+100
+        res = self.client().get('/receipes/{}'.format(nonexisting_id), headers={"Authorization": 'Bearer {}'.format(self.read_user_jwt)})
+        content = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(content["success"], False)
+        
+    def test_patch_receipe(self):
         # This test checks if updating a receipe works
+        res = self.client().get('/receipes', headers={"Authorization": 'Bearer {}'.format(self.read_user_jwt)})
+        content = json.loads(res.data)
+        new_id = content["receipes"][-1]["id"]
+        update_data={
+            "name": "Updated Test Receipe",
+            "receipe": "Add some more testing",
+            "ingredients": [{"name": "Test Ingredient", "unit": "Test Unit", "amount": 1}, {"name": "Second Test Ingredient", "unit": "Test Unit", "amount": 2}]
+        }
+        res = self.client().patch('/receipes/{}'.format(new_id), headers={"Authorization": 'Bearer {}'.format(self.write_user_jwt)}, json=update_data)
+        content = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(content["id"], new_id)
 
-    #TODO: def test_patch_receipe_wrong(self):
+
+    def test_patch_receipe_wrong(self):
         # This test checks if updating a receipe with wrong input results in an error
+        res = self.client().get('/receipes', headers={"Authorization": 'Bearer {}'.format(self.read_user_jwt)})
+        content = json.loads(res.data)
+        new_id = content["receipes"][-1]["id"]+100
+        update_data={
+            "name": "Updated Test Receipe",
+            "receipe": "Add some more testing",
+        }
+        res = self.client().patch('/receipes/{}'.format(new_id), headers={"Authorization": 'Bearer {}'.format(self.write_user_jwt)}, json=update_data)
+        content = json.loads(res.data)
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(content["success"], False)
+
+    def test_delete_receipe(self):
+        # This test checks if deleting a receipe works
+        res = self.client().get('/receipes', headers={"Authorization": 'Bearer {}'.format(self.read_user_jwt)})
+        content = json.loads(res.data)
+        new_id = content["receipes"][-1]["id"]
+        res = self.client().delete('/receipes/{}'.format(new_id), headers={"Authorization": 'Bearer {}'.format(self.write_user_jwt)})
+        content = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(content["success"], True)
+
+    def test_delete_receipe_not_existing(self):
+        # This test checks if deleting a non-existing receipe will result in an error
+        res = self.client().get('/receipes', headers={"Authorization": 'Bearer {}'.format(self.read_user_jwt)})
+        content = json.loads(res.data)
+        new_id = content["receipes"][-1]["id"]+100
+        res = self.client().delete('/receipes/{}'.format(new_id), headers={"Authorization": 'Bearer {}'.format(self.write_user_jwt)})
+        content = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(content["success"], False)
 
 # Make the tests conveniently executable
 if __name__ == "__main__":

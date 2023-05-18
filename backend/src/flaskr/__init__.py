@@ -46,15 +46,13 @@ def create_app(dbURI='', test_config=None):
     
     #this endpoint serves to get all receipes included in the database on a high level
     @app.route("/receipes", methods=["GET", "OPTIONS"])
-    #TODO: enable authorization check, read role
-    #TODO: errorhandling
     @requires_auth("get:receipes", test_config)
     @cross_origin()
     def get_receipes(payload):
         try:
             if request.method == "GET":
                 #query all receipes and format them for readability in the frontend
-                receipes = Receipes.query.all()
+                receipes = Receipes.query.order_by(Receipes.id).all()
                 receipes_formatted = [r.format() for r in receipes]
                 #create responseobject with successstats and the formatted receipelist
                 responseObject = {
@@ -63,6 +61,7 @@ def create_app(dbURI='', test_config=None):
                 }
                 return jsonify(responseObject)
         except Exception as e:
+            print(e)
             if isinstance(e, HTTPException):
                 abort(e.code)
             elif isinstance(e, AuthError):
@@ -73,8 +72,6 @@ def create_app(dbURI='', test_config=None):
 
     #this endpoint serves to post a new receipe to the database
     @app.route("/receipes", methods=["POST", "OPTIONS"])
-    #TODO: enable authorization check, create role
-    #TODO: better errorhandling
     @requires_auth("post:receipes", test_config)
     @cross_origin()
     def post_receipe(payload):
@@ -84,6 +81,7 @@ def create_app(dbURI='', test_config=None):
             #add a new receipe object
             newReceipe = Receipes(name=inputReceipe["name"], description=inputReceipe["receipe"])
             newReceipe.insert()
+            receipeId = newReceipe.id
             #loop through ingeredients, check if engredient type already exists, add it if necessary and add mappingobject
             for ingredient in inputReceipe["ingredients"]:
                 existingIngredient = Ingredient.query.filter(Ingredient.name.ilike(ingredient["name"]), Ingredient.unit.ilike(ingredient["unit"])).one_or_none()
@@ -99,7 +97,8 @@ def create_app(dbURI='', test_config=None):
                 newIngredientMap = ingredientsPerReceipe(ingredient_id=ingredientId, receipe_id=newReceipe.id, amount=ingredient["amount"])
                 newIngredientMap.insert()
             #TODO: add new object id to response
-            return jsonify({"success": True})
+            return jsonify({"success": True,
+                            "id":receipeId})
         except Exception as e:
             db.session.rollback()
             if isinstance(e, HTTPException):
@@ -142,11 +141,13 @@ def create_app(dbURI='', test_config=None):
     @cross_origin()
     def delete_receipe(payload,id):
         try:
+            receipe = Receipes.query.filter(Receipes.id == id).one_or_none()
+            if receipe is None:
+                abort(404)
             #query the ingredientsmapping objects that belong to the receipe item and delete each one of them
             ingredientMap = ingredientsPerReceipe.query.filter_by(receipe_id = id)
             [ingr.delete() for ingr in ingredientMap]
             #query the receipe object and delete it
-            receipe = Receipes.query.get(id)
             receipe.delete()
             return jsonify({"success": True})
         except Exception as e:
@@ -159,8 +160,6 @@ def create_app(dbURI='', test_config=None):
     
     #this endpoint serves to change a receipe item
     @app.route("/receipes/<int:id>", methods=["PATCH", "OPTIONS"])
-    #TODO: authorization, create role
-    #TODO: errorhandling
     @requires_auth("patch:receipe", test_config)
     @cross_origin()
     def update_receipe(payload,id):
@@ -172,6 +171,7 @@ def create_app(dbURI='', test_config=None):
             #query the receipe object and update the name and description
             receipe = Receipes.query.get(id)
             receipe.update(name = inputData["name"], description = inputData["receipe"])
+            updated_id = receipe.id
             #create the new ingredientmapping objects depending on existing ingredient item or new one
             for ingredient in inputData["ingredients"]:
                     #check if ingredient item exists
@@ -187,8 +187,8 @@ def create_app(dbURI='', test_config=None):
                     #ingredient mapping object
                     newIngredientMap = ingredientsPerReceipe(ingredient_id=ingredientId, receipe_id=id, amount=ingredient["amount"])
                     newIngredientMap.insert()
-            #TODO: reply with newly created object
-            return jsonify({"success": True})
+            return jsonify({"success": True,
+                            "id": updated_id})
         except Exception as e:
             db.session.rollback()
             if isinstance(e, HTTPException):
@@ -232,5 +232,13 @@ def create_app(dbURI='', test_config=None):
             "message": "Something went wrong on serverside",
             "error": 500
         }), 500
+    
+    @app.errorhandler(AuthError)
+    def unauthorizedException(error):
+        return jsonify({
+            "success": False,
+            "error": error.status_code,
+            "message": error.error
+        }), error.status_code
     
     return app
